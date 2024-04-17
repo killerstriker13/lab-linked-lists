@@ -208,6 +208,10 @@ public class SimpleCDLL<T> implements SimpleList<T> {
 
         // Note that no more updates are possible
         this.update = null;
+
+        //Update number of changes made by each iterator
+        ++this.numChanges;
+        ++SimpleCDLL.this.numChanges;
       } // remove()
 
       public void set(T val) {

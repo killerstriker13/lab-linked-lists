@@ -71,9 +71,12 @@ public class SimpleListExpt {
   static void removeForwardExpt(PrintWriter pen, SimpleList<String> lst,
       Predicate<String> pred) throws Exception {
     ListIterator<String> lit = lst.listIterator();
+    //ListIterator<String> lit2 = lst.listIterator(); //(Testing fail fast method)
+    //lit2.next();
 
     while (lit.hasNext()) {
       String str = lit.next();
+      //lit2.remove();
       if (pred.test(str)) {
         pen.println("Remove " + str);
         lit.remove();
@@ -115,10 +118,12 @@ public class SimpleListExpt {
   static void randomWalkRemove(PrintWriter pen, SimpleList<String> lst,
       int n) {
     ListIterator<String> lit = lst.listIterator();
+    ListIterator<String> lit2 = lst.listIterator();
 
     for (int i = 0; i < n; i++) {
       String val = "";
-
+      lit2.next();
+      lit2.remove();
       // Random walk
       for (int j = 0; j < 5; j++) {
         if (!lit.hasNext() || (lit.hasPrevious() && rand.nextInt(2) == 0)) {
