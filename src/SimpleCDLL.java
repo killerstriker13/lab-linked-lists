@@ -1,6 +1,8 @@
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.ConcurrentModificationException;
+
 
 /**
  * Simple circular doubly-linked lists with a dummy node.
@@ -25,6 +27,11 @@ public class SimpleCDLL<T> implements SimpleList<T> {
    * The number of values in the list.
    */
   int size;
+
+  /**
+   * number of changes made (useful for fail fast)!
+   */
+  int numChanges = 0;
   // +--------------+------------------------------------------------------
   // | Constructors |
   // +--------------+
@@ -71,6 +78,10 @@ public class SimpleCDLL<T> implements SimpleList<T> {
       Node2<T> next = SimpleCDLL.this.dummy.next;
 
       /**
+       * number of Changes for each iterator for fail fast strategy
+       */
+      int numChanges = SimpleCDLL.this.numChanges;
+      /**
        * The node to be updated by remove or set.  Has a value of
        * null when there is no such value.
        */
@@ -81,6 +92,9 @@ public class SimpleCDLL<T> implements SimpleList<T> {
       // +---------+
 
       public void add(T val) {
+        if(this.numChanges != SimpleCDLL.this.numChanges){
+            throw new ConcurrentModificationException("Invalid Iterator");
+        }
         //Node2<T> addNode = new Node2<>(val);
         this.prev = this.prev.insertAfter(val);
 
@@ -89,17 +103,30 @@ public class SimpleCDLL<T> implements SimpleList<T> {
 
         // Update the position
         ++this.pos;
+
+        //Update number of changes made by each iterator
+        ++this.numChanges;
+        ++SimpleCDLL.this.numChanges;
       } // add(T)
 
       public boolean hasNext() {
+        if(this.numChanges != SimpleCDLL.this.numChanges){
+            throw new ConcurrentModificationException("Invalid Iterator");
+        }
         return (this.next != SimpleCDLL.this.dummy);
       } // hasNext()
 
       public boolean hasPrevious() {
+        if(this.numChanges != SimpleCDLL.this.numChanges){
+            throw new ConcurrentModificationException("Invalid Iterator");
+        }
         return (this.prev != SimpleCDLL.this.dummy);
       } // hasPrevious()
 
       public T next() {
+        if(this.numChanges != SimpleCDLL.this.numChanges){
+            throw new ConcurrentModificationException("Invalid Iterator");
+        }
         if (!this.hasNext()) {
             throw new NoSuchElementException();
         } // if
@@ -115,14 +142,23 @@ public class SimpleCDLL<T> implements SimpleList<T> {
       } // next()
 
       public int nextIndex() {
+        if(this.numChanges != SimpleCDLL.this.numChanges){
+            throw new ConcurrentModificationException("Invalid Iterator");
+        }
         return this.pos;
       } // nextIndex()
 
       public int previousIndex() {
+        if(this.numChanges != SimpleCDLL.this.numChanges){
+            throw new ConcurrentModificationException("Invalid Iterator");
+        }
         return this.pos - 1;
       } // prevIndex
 
       public T previous() {
+        if(this.numChanges != SimpleCDLL.this.numChanges){
+            throw new ConcurrentModificationException("Invalid Iterator");
+        }
         if (!this.hasPrevious()) {
           throw new NoSuchElementException();
         } // if
@@ -138,6 +174,9 @@ public class SimpleCDLL<T> implements SimpleList<T> {
       } // previous()
 
       public void remove() {
+        if(this.numChanges != SimpleCDLL.this.numChanges){
+            throw new ConcurrentModificationException("Invalid Iterator");
+        }
         // Sanity check
         if (this.update == null) {
           throw new IllegalStateException();
