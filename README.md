@@ -1,5 +1,9 @@
-lab-linked-lists
+### MP8-linked-lists-revisited
 ================
 
-Code for a lab on implementing a simple list interface with doubly
-linked lists.
+### Author: Shibam Mukhopadhyay
+### Author: Samuel A. Rebelsky
+
+This is my mini-project submission based on the linked list lab.
+
+
